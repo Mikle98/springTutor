@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.github.mickle98'
+version = ''
+
+ext {
+    defaultEncoding = 'UTF-8'
+}
+
+allprojects {
+    repositories {
+        rootProject.buildscript.repositories.each {
+            repositories.add(it)
+        }
+    }
+}
+
+subprojects {
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    tasks.register('sourceJar', Jar) {
+        from sourceSets.main.allJava
+    }
+
+    // можно запустить для проверки какие пакеты подтянулись в classpath
+    tasks.register('printAllDependencies', DependencyReportTask) {}
+
+    tasks.withType(Javadoc).configureEach {
+        options.encoding = defaultEncoding
+        options.memberLevel = JavadocMemberLevel.PRIVATE
+        options.addBooleanOption("Xdoclint:all").setValue(true)
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+//    dependencyManagement {
+//        imports {
+//            mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.4"
+//        }
+//        resolutionStrategy {
+//            cacheDynamicVersionsFor(5, "minutes")
+//            cacheChangingModulesFor(0, "minutes")
+//        }
+//    }
+
+}
